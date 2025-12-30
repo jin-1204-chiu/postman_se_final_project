@@ -1,0 +1,371 @@
+{
+	"info": {
+		"_postman_id": "5ec8e15e-1054-4824-b92e-918e68ceb98c",
+		"name": "Demo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50384271",
+		"_collection_link": "https://yee45956978-9103857.postman.co/workspace/%E9%82%B1%E9%87%87%E5%AB%BB's-Workspace~1626a4ce-fe9c-428b-821e-fa411908ec43/collection/50384271-5ec8e15e-1054-4824-b92e-918e68ceb98c?action=share&source=collection_link&creator=50384271"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// 1. 從 CSV 檔案讀取我們預期的狀態碼 (expected_status)\r",
+							"var expected = pm.iterationData.get(\"expected_status\");\r",
+							"\r",
+							"// 如果 CSV 裡面沒有寫 expected_status，就預設為 200\r",
+							"if (!expected) {\r",
+							"\r",
+							"    expected = 200;\r",
+							"\r",
+							"}\r",
+							"\r",
+							"// 2. 進行動態檢查：我們預期它是 200 就是 200，預期是 400 就是 400\r",
+							"pm.test(\"Status code should be \" + expected, function () {\r",
+							"\r",
+							"    pm.response.to.have.status(expected);\r",
+							"\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"if (jsonData.token) {\r",
+							"    pm.environment.set(\"token\", jsonData.token); \r",
+							"    console.log(\"Token 已儲存: \" + jsonData.token); //  Newman log 也能看到\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// 測試 1: 檢查狀態碼是不是 200 ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// 測試 2: 檢查資料欄位正不正確 (有沒有 id)\r",
+							"pm.test(\"Check User Data Structure\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    // 檢查陣列中第一筆資料 (jsonData[0]) 是否包含 \"id\" 這個屬性\r",
+							"    pm.expect(jsonData[0]).to.have.property(\"id\"); \r",
+							"});\r",
+							"\r",
+							"// --- 這是視覺化特效區 ---\r",
+							"\r",
+							"var template = `\r",
+							"    <style>\r",
+							"        body { font-family: 'Helvetica', sans-serif; padding: 10px; }\r",
+							"        .user-card {\r",
+							"            background-color: #f9f9f9;\r",
+							"            border-left: 5px solid #007bff; /* 藍色邊條 */\r",
+							"            padding: 15px;\r",
+							"            margin-bottom: 10px;\r",
+							"            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);\r",
+							"            border-radius: 5px;\r",
+							"        }\r",
+							"        .error-card {\r",
+							"            background-color: #ffe6e6; /* 紅色背景 */\r",
+							"            border-left: 5px solid #dc3545; /* 紅色邊條 */\r",
+							"        }\r",
+							"        h3 { margin-top: 0; color: #333; }\r",
+							"        .tag { \r",
+							"            background: #eee; padding: 2px 6px; \r",
+							"            border-radius: 4px; font-size: 0.8em; color: #555;\r",
+							"        }\r",
+							"        .missing { color: red; font-weight: bold; font-size: 1.2em; }\r",
+							"    </style>\r",
+							"\r",
+							"    <h2>📱 模擬前端畫面 (App View)</h2>\r",
+							"    \r",
+							"    {{#each response}}\r",
+							"        <div class=\"user-card {{#unless id}}error-card{{/unless}}\">\r",
+							"            \r",
+							"            <p>\r",
+							"                <strong>User ID:</strong> \r",
+							"                {{#if id}}\r",
+							"                    <span class=\"tag\">#{{id}}</span>\r",
+							"                {{else}}\r",
+							"                    <span class=\"missing\">⚠️ 抓不到 ID (Bug!)</span>\r",
+							"                {{/if}}\r",
+							"            </p>\r",
+							"\r",
+							"            <h3>👤 {{name}}</h3>\r",
+							"            <p>✉️ {{email}}</p>\r",
+							"        </div>\r",
+							"    {{/each}}\r",
+							"`;\r",
+							"\r",
+							"// 啟動視覺化引擎\r",
+							"pm.visualizer.set(template, {\r",
+							"    response: pm.response.json()\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3000/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User1",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"DuDu Lin Update\",\r\n    \"email\": \"new_Jenny@test.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/users/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Email of User1",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"only_email_changed@test.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/users/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User1",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/users/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check Header",
+			"request": {
+				"method": "HEAD",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Server Options",
+			"request": {
+				"method": "OPTIONS",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"DuDu Lin\",\r\n    \"email\": \"Jenny@test.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "{{token}}",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "Authorization",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

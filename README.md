@@ -22,6 +22,15 @@
 
    可參照我們的demo影片流程操作各項功能
 
+   1. 取得用戶列表的三種操作(GET、POST、PUT)
+   {%youtube kmA6WBwKaIE %}
+
+   2. 當後端發生bug
+   {%youtube oo5URqHiGFM %}
+
+   3. 針對csv檔測試腳本
+   {%youtube ww9vQwOHYhs %}
+
 🛠️ API 測試方法
 本專案附帶 Postman 測試檔。
 

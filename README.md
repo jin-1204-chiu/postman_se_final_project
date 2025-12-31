@@ -11,11 +11,16 @@
 
 ## 🚀 如何執行
 
-1. **安裝依賴套件**
+1. **執行後端server**
+   
    打開終端機，執行：
    ```bash
    node server.js
 啟動伺服器，看到 測試伺服器運行中: http://localhost:3000 代表成功。
+
+2. **postman操作**
+
+   可參照我們的demo影片流程操作各項功能
 
 🛠️ API 測試方法
 本專案附帶 Postman 測試檔。
@@ -27,16 +32,17 @@
 3. 即可直接測試所有 API 功能。
 
 📝 API 列表
--POST /login: 登入 (帳號: admin1 / 密碼: password0123)
 
--GET /users: 取得列表
+- POST /login: 登入 (帳號: admin1 / 密碼: password0123)
 
--POST /users: 新增使用者
+- GET /users: 取得列表
 
--PATCH /users/:id: 修改使用者
+- POST /users: 新增使用者
 
--DELETE /users/:id: 刪除使用者
+- PATCH /users/:id: 修改使用者
 
--HEAD /users: 檢查伺服器狀態
+- DELETE /users/:id: 刪除使用者
 
--OPTIONS /users: 檢查可使用的方法
+- HEAD /users: 檢查伺服器狀態
+
+- OPTIONS /users: 檢查可使用的方法
